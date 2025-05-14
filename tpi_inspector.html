@@ -1,0 +1,73 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TPI Inspector</title>
+  <style>
+    form {
+      display: flex;
+      flex-direction: column;
+      width: 400px;
+      margin: 0 auto;
+    }
+    label, input, textarea {
+      margin-bottom: 10px;
+    }
+    button {
+      padding: 10px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Enter TPI Inspector Details</h1>
+  <form id="tpiLookupForm">
+    <label>Enter Inspection Call Number: <input type="text" id="tpiCallNumber" required></label>
+    <button type="submit">Lookup</button>
+  </form>
+  <form id="tpiForm" style="display:none">
+    <div id="tpiCallInfo"></div>
+    <label>Inspector Name: <input type="text" name="inspectorName" required></label>
+    <label>Inspection Agency: <input type="text" name="inspectionAgency" required></label>
+    <label>Inspection Start Date & Time: <input type="datetime-local" name="startDateTime" required></label>
+    <label>Inspection End Date & Time: <input type="datetime-local" name="endDateTime" required></label>
+    <label>Inspection Report Number: <input type="text" name="reportNumber" required></label>
+    <label>Upload Inspection Report: <input type="file" name="reportFile"></label>
+    <label>Remarks: <textarea name="remarks"></textarea></label>
+    <button type="submit">Submit</button>
+  </form>
+
+  <script>
+    const tpiLookupForm = document.getElementById('tpiLookupForm');
+    const tpiForm = document.getElementById('tpiForm');
+    const tpiCallInfo = document.getElementById('tpiCallInfo');
+
+    tpiLookupForm.addEventListener('submit', function(e) {
+      e.preventDefault();
+      const callNumber = document.getElementById('tpiCallNumber').value;
+      const data = JSON.parse(localStorage.getItem('call_' + callNumber));
+      if (!data) {
+        alert('Inspection Call Number not found.');
+        return;
+      }
+      tpiCallInfo.innerHTML = `<p><strong>Project Name:</strong> ${data.projectName}</p><p><strong>PO Number:</strong> ${data.poNumber}</p>`;
+      tpiForm.style.display = 'block';
+      tpiForm.dataset.callNumber = callNumber;
+    });
+
+    tpiForm.addEventListener('submit', function(e) {
+      e.preventDefault();
+      const formData = new FormData(tpiForm);
+      const tpiExtra = Object.fromEntries(formData.entries());
+      const callNumber = tpiForm.dataset.callNumber;
+      const callData = JSON.parse(localStorage.getItem('call_' + callNumber));
+      const updatedData = { ...callData, ...tpiExtra };
+
+      localStorage.setItem('call_' + callNumber, JSON.stringify(updatedData));
+      alert('TPI Inspector Data submitted and sent to QA Engineer email!');
+      console.log('TPI Inspector Final Data:', updatedData);
+    });
+  </script>
+</body>
+</html>

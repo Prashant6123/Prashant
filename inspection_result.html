@@ -1,0 +1,61 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Inspection Result</title>
+  <style>
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    th, td {
+      border: 1px solid #ccc;
+      padding: 8px;
+      text-align: left;
+    }
+    th {
+      background-color: #f4f4f4;
+    }
+  </style>
+</head>
+<body>
+  <h1>Inspection Result Table</h1>
+  <table id="resultTable">
+    <thead>
+      <tr>
+        <th>Call Number</th>
+        <th>Project Name</th>
+        <th>PO Number</th>
+        <th>QA Engineer</th>
+        <th>Inspection Agency</th>
+        <th>Inspector Name</th>
+        <th>Inspection Report No</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+  <script>
+    const tableBody = document.querySelector('#resultTable tbody');
+
+    for (let key in localStorage) {
+      if (key.startsWith('call_')) {
+        const data = JSON.parse(localStorage.getItem(key));
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td>${data.callNumber}</td>
+          <td>${data.projectName || ''}</td>
+          <td>${data.poNumber || ''}</td>
+          <td>${data.qaName || ''}</td>
+          <td>${data.inspectionAgency || ''}</td>
+          <td>${data.inspectorName || ''}</td>
+          <td>${data.reportNumber || ''}</td>
+        `;
+        tableBody.appendChild(row);
+      }
+    }
+  </script>
+</body>
+</html>
